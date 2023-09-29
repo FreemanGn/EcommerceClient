@@ -1,0 +1,40 @@
+name: Add reviewer to PR
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  add-reviewer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the name of the PR owner
+        id: check-author
+        run: echo "::set-output name=author::$(echo ${{ github.event.pull_request.user.login }})"
+
+      - name: Add reviewer
+        if: steps.check-author.outputs.author == 'FreemanGn'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+            const reviewer = 'medoum';
+            await github.pulls.createReviewRequest({ owner, repo, pull_number, reviewers: [reviewer] });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ajouter un reviewer
+        if: steps.check-author.outputs.author == 'medoum'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+            const reviewer = 'FreemanGn';
+            await github.pulls.createReviewRequest({ owner, repo, pull_number, reviewers: [reviewer] });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
