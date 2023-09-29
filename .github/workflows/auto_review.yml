@@ -28,7 +28,7 @@ jobs:
 
       - name: Ajouter un reviewer
         if: steps.check-author.outputs.author == 'medoum'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             const owner = context.repo.owner;
